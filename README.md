@@ -12,3 +12,4 @@
   #### Swift知识
   * [基础理论](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA.md)
   * [基本数据类型与基本数据结构](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.md)
+  * [函数与闭包](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Function%E4%B8%8EClosure.md)
