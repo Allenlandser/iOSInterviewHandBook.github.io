@@ -70,6 +70,80 @@ closure()
 
 ## Capture List
 
+对于Closure来说，Capture List是其中非常重要的知识点，因为它和Swift与Objective-C中的重点考察内容retain cycle有关。
+
+与Objective-C不同，Swift的closure会自动捕获上下文中需要在closure中使用的变量，即使在原本的作用域中中这些变量已经不存在了。而这一个自动捕获的默认机制是使用Strong Reference来捕获这些变量的。当然，这也不是必然的，如果某个值(value)在closure的执行过程中没有改变，那么编译器会使用这个值(value)的拷贝而不是引用。
+
+因为Capture List的默认机制是进行一个强引用，所以如果我们在一个类的实例中将一个Closure赋值给了它的某个属性，那么这么Closure就会自动捕获当前类的实例，这样我们就有了一个retain cycle。
+
+这里我们来看另外的一个例子可能会造成问题的：
+
+```
+func presentDelayedConfirmation(in presenter: UIViewController) {
+    let queue = DispatchQueue.main
+
+    queue.asyncAfter(deadline: .now() + 3) {
+        let alert = UIAlertController(
+            title: "...",
+            message: "...",
+            preferredStyle: .alert
+        )
+        presenter.present(alert, animated: true)
+    }
+}
+```
+
+在这里虽然一眼看上去没有问题，但是在closure中执行`presenter.present(alert, animated: true)`时，我们可能会碰到`present`已经被移除了。虽然这不会引起严重的问题，但是我们也应该避免以上的这种状况。
+
+当然，解决以上两种情况，我们只要使用`capture list`并且将其中的变量用`weak`来修饰就可以了；
+
+``` swift
+func presentDelayedConfirmation(in presenter: UIViewController) {
+    let queue = DispatchQueue.main
+    queue.asyncAfter(deadline: .now() + 3) { [weak presenter] in
+        // 我们先检查presenter依旧在内存中，否则就直接返回
+        guard let presenter = presenter else { return }
+
+        let alert = UIAlertController(
+            title: "...",
+            message: "...",
+            preferredStyle: .alert
+        )
+
+        presenter.present(alert, animated: true)
+    }
+}
+```
+
+下面我们来看看`[weak self]`。诚然，在`capture list`中使用`[weak self]`是没有大问题的，但是`[weak self]`也并不是必要的，比如下面的一个例子：
+
+```swift
+class ImageLoader {
+    private let cache = Cache<URL, Image>()
+
+    func loadImage(from url: URL,
+                   then handler: @escaping (Result<Image, Error>) -> Void) {
+        request(url) { [cache] result in
+            do {
+                let image = try result.decodedAsImage()
+                cache.insert(image, forKey: url)
+                handler(.success(image))
+            } catch {
+                handler(.failure(error))
+            }
+        }
+    }
+}
+```
+
+这里我们并没有直接使用`[weak self]`，而是使用通过`capture list`捕获了类中的`cache`属性，这样我们就避免了因为捕获了`self`而形成的`retain cycle`。
+
+### Unowned关键字
+
+`unowned`关键字和`weak`关键字类似，被`unowned`关键字修饰的变量不会形成`retain cycle。`唯一的不同就是`unowned`的和`optional`中的强制解析(Force Unwraping)有些类似：我们在使用被`unwoned`关键字修饰的变量时，不需要进行nil检查，我们可以将这个`weak-reference`的变量当做`non-optional`来使用，但是如果该引用的变量已经被释放了，在使用该变量的时候就会导致崩溃。
+
+所以说如果我们确定在一个被捕捉的变量在`Closure`中调用时绝对不会是`nil`时，我们可以用`unowned`关键字来修饰它，来简化我们的代码。在实际应用中，因为`weak`能够覆盖`unowned`的情况，所以我们会优先使用`weak` 关键字，即便我们需要做额外的检查。
+
 ## Pure Function
 
 纯函数(Pure Function)是function programming中的一个概念，定义如下：
