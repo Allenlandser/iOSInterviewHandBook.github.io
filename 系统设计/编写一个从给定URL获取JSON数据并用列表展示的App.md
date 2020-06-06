@@ -224,6 +224,7 @@ extension ViewController: UITableViewDataSource {
 下一步我们进行UITableViewCell的编写。我这里采用了`.xib`做界面并使用了代码做进一步的逻辑控制。在界面方面我主要使用`UIStackView`进行布局，可以节省大量的时间。
 
 `xib`的layout如下图所示：
+![图1](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/pic1.png)
 
 具体的代码则如下所示
 
@@ -326,3 +327,4 @@ public class APIClient {
 
 最后来看一下Demo吧：
 
+![Demo](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/demo1.gif)
