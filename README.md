@@ -17,3 +17,4 @@
   #### 系统设计
   * [系统设计总览](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E6%80%BB%E8%A7%88.md)
   * [编写一个从给定URL获取JSON数据并用列表展示的App](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E4%BB%8E%E7%BB%99%E5%AE%9AURL%E8%8E%B7%E5%8F%96JSON%E6%95%B0%E6%8D%AE%E5%B9%B6%E7%94%A8%E5%88%97%E8%A1%A8%E5%B1%95%E7%A4%BA%E7%9A%84App.md)
+  * [Image Downloader](https://github.com/Allenlandser/iOSInterviewHandBook.github.io/blob/master/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/Image%20Downloader.md)
