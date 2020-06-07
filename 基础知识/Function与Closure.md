@@ -179,3 +179,51 @@ extension String {
 }
 ```
 
+## @autoclosure
+
+`autoclosure`关键字能够自动地为被当做参数传入的closure建立一个新的`wrap closure`。传入的代码片段并不会立刻执行，而是当我们显示地调用这个`closure`时才会执行。当它被执行时，它会调用被包装的`closure`并返回被包装的`closure`的返回值。这其实是一个简单的语法糖，能够让我们的代码更加简洁。来看一个例子：
+
+``` swift
+func isValid(_ lhs: Bool, _ rhs: @autoclosure () -> Bool) -> Bool {
+    guard lhs else {
+        return false
+    }
+    return rhs()
+}
+if isValid(numbers.count > 0, numbers.last == 10) {
+    // perform some work
+}
+```
+
+这里`rhs`中的代码不会立刻被执行，而是当`lhs`被返回值为`true`时才会执行`rhs`这个`closure`。
+
+如果不使用`@autoclosure`的话，代码会变成这样：
+
+``` swift
+func isValid(_ lhs: Bool, _ rhs: () -> Bool) -> Bool {
+    guard lhs else {
+        return false
+    }
+    return rhs()
+}
+if isValid(numbers.count > 0, { numbers.last == 10 }) {
+    // perform some work
+}
+```
+
+或者
+
+```swift
+func isValid(_ lhs: Bool, _ rhs: Bool) -> Bool {
+    guard lhs else {
+        return false
+    }
+    return rhs
+}
+if isValid(numbers.count > 0, numbers.last == 10) {
+    // perform some work
+}
+```
+
+这样的话`numbers.last == 10`不论如何都会执行，这无疑会造成系统的浪费。而和上述例子类似，Swift的`Foundation`中的`&&`,`||`等操作符，都用了`@autoclosure`关键字。
+
