@@ -151,7 +151,7 @@ print("Total books: \(Book.counter)")
 print("Total pages: \(Page.counter)")
 ```
 
-点击run之后，我们会发现代码并不会按照我们的意思输出，题目要求**只能更改两个Bool和Page中的代码**来修正bug。
+点击run之后，我们会发现代码并不会按照我们的意思输出，题目要求**只能更改两个Book和Page中的代码**来修正bug。
 
 这道题中的代码其实有些反直觉，大致梳理一下就是这里的`Book`类中有一个存储`Page`类实例的数组，而`Page`类中又有一个属性指向包含它自身的`Book`类的实例。这两个类中又各自都有一个`Type Property`来记录一共实例化了多少`Book`实例和`Page`实例。
 
@@ -213,12 +213,15 @@ class Page {
 
 运行之后，我们会看到代码输出的结果和预期的相同
 
-> Added new books to a library
-> Total books: 10
-> Total pages: 53
-> Removed one book from the library
-> Total books: 9
-> Total pages: 48
-> Removed all books from a library
-> Total books: 0
-> Total pages: 0
+``` swift
+Added new books to a library
+Total books: 10
+Total pages: 53
+Removed one book from the library
+Total books: 9
+Total pages: 48
+Removed all books from a library
+Total books: 0
+Total pages: 0
+```
+
