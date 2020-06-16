@@ -198,9 +198,52 @@ struct Point {
 
 与`Objective-C`的`init`方法不同，`Swift`的`init`方法不返回值，它的主要功能是确保实例在初次使用前能够被正确地初始化。
 
+### 两段式初始化
 
+Swift 的类初始化是一个两段式过程。
 
+* 在第一个阶段，我们需要为每一个属性分配一个初始值。一旦每个存储属性的初始状态被确定，初始化就会转入第二阶段。
+* 在第二个阶段中，我们可以为类的实例订制属性的值。
 
+两段式初始化过程的使用让初始化更加安全，同时在每个类的层级结构给与了完备的灵活性。两段式初始化过程可以防止属性值在初始化之前被访问，还可以防止属性值被另一个初始化器意外地赋予不同的值。
+
+### Designated Initializer 与 Convenience Initializer（convenience关键字）
+
+`Designated Initializer` 并不是`Swift`的特性，其他的语言也有类似的定义。但是Swift中显示地定义了`convenience`关键字，并将`Designated Initializer` 与 `Convenience Initializer`作为语言的特色包括在了其中。
+
+我们先来看一下什么是`Designated Initializer`：
+
+`Designated Initializer`是类的主要初始化器。`Designated Initializer`可以初始化所有那个类引用的属性并且调用合适的父类初始化器来继续这个初始化过程给父类链。每一个类必须有**至少**一个`Designated Initializer`，因为不管我们调用类的那一个`Initializer`，最终我们都必须要调用`Designated Initializer`来初始化类的实例。
+
+与之对应的，`Convenience Initializer`则是用`convenience`关键字修饰的`Initializer`。我们可以在一个类中定义任意数目的`Convenience Initializer`来为类的初始化提供比较简单的接口，比如为一些参数定义预设值。需要注意的是，`Convenience Initializer` 并不是必须的。
+
+关于`Designated Initializer`和`Convenience Initializer`以及父类的`Designated Initializer`的规则可以用下面的图来概括：
+
+![pic1](./pic1.png)
+
+简单来说，规则可以囊括为下面两点：
+
+* `Convenience Initializer`必须调用自身类的`Designated Initializer`。
+
+* 类的`Designated Initializer`必须调用父类的`Designated Initializer`。
+
+### Failable Initializer
+
+虽然说`Swift`的`init`方法不返回任何值，但是在某些情况下，比如用`rawValue`初始化`enum`时，我们可能会面临`rawValue`不符合任何一个`case`的情况，这个时候，我们就需要`enum`自动生成的`init`方法返回`nil`。而这也是`Swift`中的一个特殊的`init`方法，`Failable Initializer`。语法上，我们只要将`init`方法的签名改为`init?()`即可。
+
+`Failable Initializer`创建了一个初始化类型的*可选*值。通过在`Failable Initializer`中写 `return nil` 语句，来表明`Failable Initializer`在何种情况下会触发初始化失败。但是，对于Swift来说，严格来讲，`Initializer`不会有返回值。相反，它们的角色是确保在初始化结束时， `self` 能够被正确初始化。虽然你写了 `return nil` 来触发初始化失败，但是不能使用 `return` 关键字来表示初始化成功了。同时，不能定义`Failable Initializer`和`None-Failable Initializer`为相同的形式参数类型和名称。
+
+一个简单的例子：
+
+``` swift
+struct Animal {
+    let species: String
+    init?(species: String) {
+        if species.isEmpty { return nil }
+        self.species = species
+    }
+}
+```
 
 
 
