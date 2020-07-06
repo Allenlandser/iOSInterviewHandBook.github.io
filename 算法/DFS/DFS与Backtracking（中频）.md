@@ -126,7 +126,7 @@ func getNumberOfMines(_ board: [[Character]], _ x: Int, _ y: Int) -> Int {
 
 ## Backtracking（回溯）
 
-Backtracking算是DFS中的一个分支，经典的例题也有很多，比如**Permutations**，**N-Queue**以及**Subsets**等。Backtracking与DFS最大的不同在于，当当前层的递归结束，在返回上一层的递归时，我们需要恢复当前层做出的修改。这也是**Backtracking**的由来。
+Backtracking算是DFS中的一个分支，经典的例题也有很多，比如**Permutations**，**N-Queue**以及**Subsets**等。Backtracking与DFS最大的不同在于，当当前层的递归结束，在返回上一层的递归时，我们需要恢复当前层做出的修改。这也是**Backtracking**中的**Back**的由来。
 
 ### 模板
 
@@ -151,7 +151,7 @@ func backTracking(choices, selectedChoices, result) {
 
 ### [Letter Combinations of a Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number/)
 
-这道算是比较直观的Backtracking的题目，在解题之前，我们可以先分析一下如果不写代码，我们要怎么去借这道题呢？
+这道算是比较直观的Backtracking的题目，在解题之前，我们可以先分析一下如果不写代码，我们要怎么去解这道题呢？
 
 首先我们来看题目给出的例子——『23』，要求求所有的可能的字母组合，
 
@@ -204,7 +204,81 @@ private func backtracking(_ index: Int,
 
 大家可以看一下`backtracking`方法中的代码，我也给其中的重要的代码做出了注释。对比一下我给出的模板，你会发现这基本的逻辑是没有区别的。
 
+### [N-Queens](https://leetcode.com/problems/n-queens/)
 
+N-Queeens问题绝对是Backtracking中的经典题目，如果不熟悉或者没有遇到Backtracking的题目，那么这道题目的确很难；然而我们现在已经有了模板，那我们就可以先看看如果套用模板的话，我们可以解开这道题吗？
+
+``` swift
+func backTracking(currentRow, previousSelectedPosition, result) {
+	if previousSelectedPosition is fullfilled {
+    add previousSelectedPosition to result
+    return 
+  } 
+	
+  for colIndex in currentRow {
+    if adding colIndex to previousSelectedPosition is valid { // 重点
+    	add the colIndex to the previousSelectedPosition 
+			backTracking(nextRow, previousSelectedPosition, reuslt)
+	    remove the col choice from the previousSelectedPosition
+    }
+  }
+}
+```
+
+可以看到，除了一个被我标记出『重点』的判断条件以外，N-Queens问题可以完美地套用我之前给出的模板，换句话说，只要替换上面的伪代码，我们就能够写出答案。那么剩下的子问题就是要如何编写一个快速判断新插入的位置是否合法的方法来降低，这里涉及到一些技巧，我们来看看具体的方法。
+
+首先我们需要用一个数组来记录每一个放置棋子位置的X，Y坐标，这样的话我们可以使用用tuple来记录；当然，也可以简单地使用数组的`index`来表示X坐标，每一个值来表示Y坐标；这个数组中存放的都是Valid的坐标，每当有新坐标进入时，我们只需要检查两者的Y坐标值是否相同，且X坐标只差的绝对值和Y坐标只差的绝对值是否相同即可，一旦两者有一个相同，那么这两个坐标就是冲突的。
+
+解决了上面的大问题（总体思路）和小问题（坐标检查）之后，我们就可以写出我们的代码了
+
+```swift
+func solveNQueens(_ n: Int) -> [[String]] {
+    var res: [[String]] = []
+    var curr: [Int] = []
+    backtracking(0, n, &curr, &res)
+    return res
+}
+
+private func backtracking(_ row: Int, 
+                          _ n: Int,
+                          _ curr: inout [Int], 
+                          _ res: inout [[String]]) {
+    if row == n {
+        res.append(convertPosToRes(curr, n))
+        return 
+    }
+
+    for i in 0 ..< n {
+        if isValid(curr, i) { //与上一题的区别
+            curr.append(i)
+            backtracking(row + 1, n, &curr, &res)
+            curr.removeLast()
+        }
+    }
+}
+
+private func isValid(_ curr: [Int], _ newPos: Int) -> Bool {
+    for i in 0 ..< curr.count {
+        let pos = curr[i]
+        if pos == newPos || abs(newPos - pos) == abs(curr.count - i) { //主要判断逻辑
+            return false
+        }
+    }
+
+    return true
+}
+
+
+private func convertPosToRes(_ pos: [Int], _ n: Int) -> [String] {
+    var res: [String] = []
+    for yIndex in pos {
+        var row: [Character] = Array(repeating: ".", count: n)
+        row[yIndex] = "Q"
+        res.append(String(row))
+    }
+    return res
+}
+```
 
 
 
