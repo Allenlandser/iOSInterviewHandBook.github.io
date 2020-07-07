@@ -268,7 +268,6 @@ private func isValid(_ curr: [Int], _ newPos: Int) -> Bool {
     return true
 }
 
-
 private func convertPosToRes(_ pos: [Int], _ n: Int) -> [String] {
     var res: [String] = []
     for yIndex in pos {
@@ -280,5 +279,47 @@ private func convertPosToRes(_ pos: [Int], _ n: Int) -> [String] {
 }
 ```
 
+可以看到，虽然代码有些长，但是其中包含了大量的`helper function`，主要的核心逻辑和上面的伪代码还有模板十分短小精悍。
 
+最后我们来看一道略微有些不同的题：
+
+### [Permutations](https://leetcode.com/problems/permutations/)
+
+这道题目我们当然可以套用模板来解，只是确定每一次需要选择的元素的过程可能会比较繁琐，这里我们使用另外一个`Backtracking`中的小技巧：**交换元素**来解题。
+
+按照我们之前介绍过的思路来说，在计算[1,2,3]的全排列时，我们会先从[1,2,3]中选择一个元素作为第一个元素，然后在剩下的元素中继续重复这个选择的过程。这样的话，我们每次都要做新建新的`Array`，这无疑对于性能是极大的浪费；这里我来介绍一下一个更加实用的技巧：
+
+在起始时我们有[1,2,3]的元素，那么我们需要从三个元素中选择一个元素，放到第一个位置，也就是说，我们只要将[1] 与 [1, 2, 3]中的任意一个元素交换就可以了。交换之后，我们就确定了第一个元素，然后我们将从剩下的两个元素中选择一个元素与第二个元素交换即可。具体可以看下面的图来理解：
+
+![pic1](./pic1.png)
+
+有了上面的技巧和模板，我们可以直接写出代码，只要将模板中的选择改为**交换**就可以了，话不多说，直接来看代码：
+
+``` swift
+func permute(_ nums: [Int]) -> [[Int]] {
+    var res: [[Int]] = []
+    var nums = nums
+    backtracking(&nums, 0, &res)
+    return res
+}
+
+private func backtracking(_ nums: inout [Int], _ index: Int, _ res: inout [[Int]]) {
+    if index == nums.count - 1 {
+        res.append(nums)
+        return 
+    }
+
+    var swapIndex = index
+    while swapIndex < nums.count {
+        nums.swapAt(index, swapIndex) // 从未交换的位置选出当前的元素
+        backtracking(&nums, index + 1, &res)
+        nums.swapAt(index, swapIndex) // 返回修改之前的状态
+        swapIndex += 1
+    }
+}
+```
+
+## 小结
+
+总的来说，DFS和Backtracking都是递归的一种，牢记递归三要素和本节中的模板并勤加练习，就足以覆盖面试中出现的大部分的DFS和Backtracking的题目了。
 
