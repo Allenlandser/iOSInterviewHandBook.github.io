@@ -71,5 +71,19 @@ GPU 有一个机制叫做垂直同步（简写也是 V-Sync），当开启垂直
 
 [Understanding UIScrollView](https://oleb.net/blog/2014/04/understanding-uiscrollview/)
 
+### storyboard/xib与纯代码构建 UI 的对比
 
+|      | **storyboad/xib**                                            | 纯代码                                                       |
+| ---- | ------------------------------------------------------------ | :----------------------------------------------------------- |
+| 优点 | **简单直接。**直接拖拽和点选即可配置 UI，界面所见即所得。<br /> **跳转关系清楚。**Storyboards 中可以清楚的区分 View Controller 界面之间的跳转关系。而且在代码中，通过实现 prepare(for segue: UIStoryboardSegue, sender: Any?)，可以统一管理界面跳转和数据管理。<br />**屏幕适配** Storyboard和xib提供可视化的屏幕适配和**Size Class**选项，便于开发人员进行快速地开发 | **高性能**。与Storyboard和xib相比，纯代码构筑的UI界面性能比较高，XCode解析和绘制Storyboard需要消耗大量的资源。<br />**高复用**。纯代码构筑的UI可以轻松地被复用，甚至可以将构筑的UI打包到Package中实现多App的共用。<br />**便于追踪修改**。对比storyboard和xib，纯代码的布局在Git上更加直观，可以看到修改的过程。 |
+| 缺点 | **协作冲突。**多人编辑时很容易产生冲突，且冲突很难解决。因为自带 Xcode 和系统的版本号，协作时 storyboard/xib 会在相同位置做同样修改，这样代码冲突几乎是不可避免的。解决方法是细分 storyboard 以及对应工程师的职责，但是这样同样带来了维护成本。 <br />**很难做到界面继承和重用。**代码中实现要容易和明确得多，然而 storyboard/xib 却很难做到。 <br />**不便于进行模块化管理。**storyboard/xib 中搜索起来很不方便，且统一修改多个 UI 控件的属性值不可能，必须一个一个改。在代码中一个工厂模式就可以搞定。<br />**性能影响。**storyboard/xib 在界面渲染上有时会成为性能杀手。 | **不直观**。除了在Playground和SwiftUI下，纯代码的布局需要大量的调试和编译，也需要开发者有足够的经验。<br />**需要大量的跳转代码**。VC之间的跳转需要大量的代码或者构建的Helper Class来实现，需要有经验的开发者维护和编写。 |
 
+### AutoLayout与Frame布局的对比
+
+* AutoLayout
+  * **Auto Layout 是针对多尺寸屏幕的设计*：其本质是通过线性不等式对 UI 控件的相对位置进行设定，从而适配多种 iPhone/iPad 屏幕的尺寸。
+  * **性能较差**：Auto Layout 的布局过程首先求解线性不等式，然后再转化为 Frame 去进行布局。其中求解的计算量非常大，通常 Auto Layout 的性能损耗是 Frame 布局的 10 倍左右。
+  * **性能优化**：Auto Layout的布局计算是可以在后台线程中进行的，我们以此来加快界面的渲染，同时对于已经计算过的layout可以做缓存，减少二次运算带来的开销。有一些第三方SDK像Pinterest 的 Texture（前身是 ASDK ）就使用了这样的方式来进行性能优化。感兴趣的话可以参考下面的链接获得更多的信息：[Texture](https://texturegroup.org/)
+* Frame
+  * **Frame 是基于 xy 坐标轴系统的布局机制**：它从数学上限定了 UI 控件的具体位置，是 iOS 开发中最底层、最基本的界面布局机制。
+  * **性能相对较优**：Frame布局直接通过代码得到控件的位置，能够跳过Autolayout的计算过程。
